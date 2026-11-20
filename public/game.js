@@ -43,7 +43,7 @@ function render(){document.body.classList.toggle('title-screen',s.stage===0);doc
 
  if(s.stage===6)html=`<span class="eyebrow">GROUP CHAT · YOUR FINAL MOVE</span><h1>Bring everyone on board.</h1>${summary(s.revised)}${btn('Compare all routes + saved plans','atlas','secondary')}${bubble('mia','What has changed, which route should we take, and why does it work for us?')}<div class="meeting-pill">${icon('pin')}Meet at ${s.revised.result.legs[0].bay}, Brookford · 10 minutes before ${s.revised.result.legs[0].departure}</div>${composer('message')}`;
  if(s.stage===7)html=endingHTML();
- main.innerHTML=`${missionSteps()}<section class="screen">${html}</section><footer><span>Fictional journey · language review sends submitted text to OpenAI when connected</span>${btn('For teachers & sources','teachers','text-button')}</footer>`;
+ main.innerHTML=`${missionSteps()}<section class="screen">${html}</section><footer><span>Fictional journey · submitted text is sent to the AI language review when connected</span>${btn('For teachers & sources','teachers','text-button')}</footer>`;
  side.innerHTML=`${s.stage>=3?`<section class="persistent-map"><div class="side-heading">LIVE NETWORK ${btn('All options','atlas','text-button')}</div>${routeMap(s.stage===6||s.stage===7?s.revised?.ids||[]:s.stage===3&&s.drafts.length===2?s.drafts[s.selected].ids:s.editing,s.event)}${s.drafts.length?btn('Compare saved plans','atlas','secondary'):''}</section>`:''}${teamRail()}<div class="side-heading">MISSION BOARD ${btn('Open','requirements','text-button')}</div>${requirementsTiles({compact:true})}${s.known.size?`<div class="side-heading">CASEY’S NOTES</div>${caseyFacts([...s.known].filter(k=>['seats','access'].includes(k)))}`:''}<button class="toolkit-link" data-action="toolkit">${icon('chat')}Language toolkit</button>`;
  mountLanguageReview();
  updateClock();
@@ -53,7 +53,7 @@ function mountLanguageReview(){
  const area=document.querySelector('.compose-section .speech');
  if(!area)return;
  const kind=s.stage===2?'question':'message';
- const notice=document.createElement('p');notice.className='small-note';notice.textContent='Language review checks this message. When connected, your text is sent to OpenAI for feedback. Use only the fictional journey details.';area.append(notice);
+ const notice=document.createElement('p');notice.className='small-note';notice.textContent='Language review checks this message. When connected, your text is sent to the AI language review for feedback. Use only the fictional journey details.';area.append(notice);
  const panel=document.createElement('section');panel.className='language-feedback';panel.setAttribute('aria-live','polite');
  const entry=language.current;
  if(language.busy)panel.innerHTML='<p role="status">Reviewing your message…</p>';
