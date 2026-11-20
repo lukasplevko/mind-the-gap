@@ -1,14 +1,14 @@
 // GWR published Saturday timetable, 17 May to 12 December 2026.
-export const timetableSource = 'https://www.gwr.com/-/media/gwr-sc-website/files/timetables/may-26-december-26/TS-train-times-17-May-to-12-December-2026.pdf';
+export const timetableSource = 'https://www.gwr.com/-/media/gwr-sc-website/files/timetables/may-26-december-26/TS-train-times-17-May-to-12-December-2026-v2.pdf';
 const leg = (id, from, to, departure, arrival, fare) => ({
   id, from, to, departure, arrival, fare, mode:'GWR train', bay:'departure board', seats:8, stepFree:true,
 });
 export const services = [
   leg('GWR 1732','Oxford','Reading','17:32','18:00',9),
   leg('GWR 1759','Oxford','Reading','17:59','18:30',10),
-  leg('GWR 1802','Reading','London Paddington','18:02','18:25',14),
+  {...leg('GWR 1802','Reading','London Paddington','18:02','18:25',14),seats:3},
   leg('GWR 1832','Reading','London Paddington','18:32','18:57',15),
-  leg('GWR 1849','Reading','London Paddington','18:49','19:13',16),
+  {...leg('GWR 1849','Reading','London Paddington','18:49','19:13',16),stepFree:false},
   leg('GWR 1900','Reading','London Paddington','19:00','19:24',13),
 ];
 export const minute=t=>Number(t.slice(0,2))*60+Number(t.slice(3));
