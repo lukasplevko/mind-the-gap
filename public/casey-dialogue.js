@@ -1,7 +1,7 @@
 export const caseySteps=[
- {label:'Greet',instruction:'Say hello to Casey.',prompt:'Start with a polite greeting.'},
+ {label:'Greet',instruction:'Say hello to Casey.',prompt:'“Hello” is enough.'},
  {label:'Explain',instruction:'Explain why you need help.',prompt:'Tell Casey that your train was cancelled and where your group needs to go.',grammar:'Use the past simple for what happened and the present simple for what you need now.'},
- {label:'Describe needs',instruction:'Tell Casey what your group needs.',prompt:'In two or three sentences, cover the group size, step-free access, Reading stop, arrival deadline and budget.',grammar:'Use the present simple for requirements, for example “We need …” or “One of us wants …”.'},
+ {label:'Describe needs',instruction:'Tell Casey what your group needs.',prompt:'In three sentences, describe your group’s needs so Casey can suggest suitable routes. Include travelling together, step-free access, a McDonald’s stop, enough time to change, arriving on time and keeping within budget. Exact times and amounts are not needed.',grammar:'Use the present simple for requirements, for example “We need …” or “One of us wants …”.'},
  {label:'Say goodbye',instruction:'Thank Casey and say goodbye.',prompt:'Thank Casey for the help, then end the conversation politely.',grammar:'Use the present simple to express thanks, for example “I appreciate …”. A short “Thank you” is fine too.'}
 ];
 export function caseyReply(step){return [
@@ -13,6 +13,6 @@ export function caseyReply(step){return [
 export function caseySignals(step,text){const has=re=>re.test(text);return [
  [['Greet Casey',has(/\b(hello|hi|hey|good (morning|afternoon|evening)|greetings)\b/i)]],
  [['Say that your train was cancelled',has(/cancel|not running|not coming|no (train|service)/i)],['Say where your group needs to go',has(/london|paddington/i)]],
- [['Four travellers together',has(/\b(four|4|together|whole group)\b/i)],['Arrival by 20:00',has(/20[.:]00|8\s*(p\.?m\.?|o.clock)|eight/i)],['Step-free access',has(/step.?free|crutch|Alena|access|stairs|lift/i)],['McDonald’s stop',has(/mcdonald|friar street/i)],['30 minutes in Reading',has(/\b(30|thirty)\b|(?:15|fifteen).*(?:15|fifteen)/i)],['Budget and reserve',has(/108|120|12|budget|reserve|emergenc/i)]],
+ [['Four travellers together',has(/\b(four|4|together|whole group)\b/i)],['Arrive on time',has(/on time|in time|before|deadline|20[.:]00|eight/i)],['Step-free access',has(/step.?free|crutch|Alena|access|stairs|lift/i)],['McDonald’s stop',has(/mcdonald|friar street/i)],['Enough time to change',has(/enough time|time to (change|transfer)|extra time|\b(30|thirty)\b/i)],['Budget and reserve',has(/108|120|12|budget|reserve|emergenc/i)]],
  [['Thank Casey',has(/thank|thanks|appreciate|grateful/i)],['Say goodbye',has(/bye|goodbye|see you|take care|have a (good|nice|lovely)/i)]]
  ][step]}

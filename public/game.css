@@ -178,3 +178,11 @@
   margin-block-start: 4vh;
   margin-inline-end: max(0px, calc((100% - 670px) / 2));
 }
+
+/* Keep review cards readable inside the dark message composer. */
+.composer .language-point,.composer .writing-suggestions{color:#172b49;background:#f4f6fa}
+.composer .language-point p,.composer .language-point q,.composer .language-point strong,.composer .writing-suggestions p{color:inherit}
+.composer .small-note{color:#d0d9e8}
+.grammar-checks{display:grid;gap:.5rem;padding:0;list-style:none}
+.grammar-checks li{padding:.65rem .8rem;background:#f4f6fa;color:#172b49;border-radius:.4rem}
+.grammar-checks strong{display:block}

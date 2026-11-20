@@ -138,9 +138,9 @@ function mountLanguageReview(){
  if(language.busy)panel.innerHTML='<p role="status">Reviewing your message…</p>';
  else if(entry&&entry.key===languageKey()){
  panel.innerHTML=reviewPanel(entry,esc);
- if(entry.error)panel.innerHTML+=btn('Continue with teacher review','teacher-review','secondary');
- else if(!entry.blocked)panel.innerHTML+=btn('Continue with this message','accept-writing');
+ if(!entry.error&&!entry.blocked)panel.innerHTML+=btn('Continue with this message','accept-writing');
  }
+ panel.innerHTML+=btn('Continue with teacher review','teacher-review','secondary');
  area.append(panel);
  const send=area.querySelector('[data-action="send"]');if(send){send.disabled=language.busy;send.textContent=entry&&!entry.error?'Check my revision':'Check & send';}
  const field=area.querySelector('textarea');if(field)field.disabled=language.busy;
@@ -156,7 +156,7 @@ async function reviewWriting(){
  try{
  const response=await fetch('/api/language-review',{method:'POST',headers:{'Content-Type':'application/json'},signal:AbortSignal.timeout(25000),body:JSON.stringify({step:s.requests.length,text})});
  const data=await response.json();if(!response.ok)throw Error(data.error||'Language review is unavailable. Retry or use teacher review.');
- entry.result=data;entry.blocked=!data.relevant||data.missing.length>0||data.contradictions.length>0||data.corrections.some(c=>c.major);
+ entry.result=data;entry.blocked=data.corrections.some(c=>c.major);
  language.available=true;
  }catch(error){entry.error=error.name==='TimeoutError'?'Language review timed out. Your message has been kept. Retry or use teacher review.':error.message;}
  finally{
@@ -165,13 +165,23 @@ async function reviewWriting(){
  language.busy=false;previous.push(entry);language.attempts.set(key,previous);
  }
  if(s.stage!==2||languageKey()!==key)return;
- if(entry.result&&!entry.blocked&&!entry.result.corrections.length){acceptWriting(false);return;}
+
  render();document.querySelector('.language-feedback')?.scrollIntoView({block:'center',behavior:'smooth'});
 }
 function acceptWriting(unreviewed){
- const entry=language.current;if(!entry||language.busy)return;
- if(languageKey()!==entry.key||s.question.trim()!==entry.text){show('Check your edited message','<p>Your text has changed. Check this version before continuing.</p>');return;}
- if(unreviewed?!entry.error:(!entry.result||entry.blocked))return;
+ let entry=language.current;if(language.busy)return;
+ const text=s.question.trim();
+ if(!text){show('Write your message','<p>Add your message before continuing.</p>');return;}
+ if(unreviewed){
+  if(!entry||entry.key!==languageKey()||entry.text!==text){
+   entry={key:languageKey(),text,label:caseySteps[s.requests.length].instruction,attempt:1};
+   const attempts=language.attempts.get(entry.key)||[];
+   attempts.push(entry);language.attempts.set(entry.key,attempts);
+  }
+ }else{
+  if(!entry||languageKey()!==entry.key||text!==entry.text){show('Check your edited message','<p>Your text has changed. Check it again or continue with teacher review.</p>');return;}
+  if(!entry.result||entry.blocked)return;
+ }
  language.history.push({label:entry.label,finalText:entry.text,attempts:[...(language.attempts.get(entry.key)||[])],accepted:entry,unreviewed});
  language.current=null;sendCasey();
 }
