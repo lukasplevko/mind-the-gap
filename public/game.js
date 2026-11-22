@@ -143,7 +143,7 @@ function mountLanguageReview(){
  panel.innerHTML=reviewPanel(entry,esc);
  if(!entry.error)panel.innerHTML+=btn('Continue with this message','accept-writing');
  }
- panel.innerHTML+=btn('Continue with teacher review','teacher-review','teacher-review-button');
+ panel.innerHTML+=btn('Continue with teacher review','teacher-review','teacher-review-button',teacherBackupAvailable()?'':'disabled title="Available if the automatic check is unavailable"');
  area.append(panel);
  const send=area.querySelector('[data-action="send"]');if(send){send.disabled=language.busy;send.textContent=entry&&!entry.error?'Check my revision':'Check & send';}
  const field=area.querySelector('textarea');if(field)field.disabled=language.busy;
@@ -158,10 +158,15 @@ async function reviewWriting(){
  language.busy=true;language.current=entry;const start=Date.now();render();
  try{
  const response=await fetch('/api/language-review',{method:'POST',headers:{'Content-Type':'application/json'},signal:AbortSignal.timeout(25000),body:JSON.stringify({step:s.requests.length,text})});
- const data=await response.json();if(!response.ok)throw Error(data.error||'Language review is unavailable. Retry or use teacher review.');
- entry.result=data;entry.blocked=data.corrections.some(c=>c.major);
+ entry.serviceUnavailable=response.ok||response.status>=500||[404,408,429].includes(response.status);
+ const data=await response.json();if(!response.ok)throw Error(data.error||'Unable to check this message.');
+ if(!Array.isArray(data.corrections))throw Error('The automatic check returned an incomplete review.');
+ entry.result=data;entry.serviceUnavailable=false;
  language.available=true;
- }catch(error){entry.error=error.name==='TimeoutError'?'Language review timed out. Your message has been kept. Retry or use teacher review.':error.message;}
+ }catch(error){
+ entry.serviceUnavailable??=true;
+ entry.error=entry.serviceUnavailable?'The automatic check is unavailable. Try again or continue with teacher review.':error.message;
+ }
  finally{
  // Waiting for the service does not consume the pupil's planning time.
  const elapsed=Date.now()-start;if(s.startedAt)s.startedAt+=elapsed;if(s.stationAt)s.stationAt+=elapsed;
@@ -172,8 +177,13 @@ async function reviewWriting(){
  if(entry.result){acceptWriting(false);return;}
  render();document.querySelector('.language-feedback')?.scrollIntoView({block:'center',behavior:'smooth'});
 }
+function teacherBackupAvailable(){
+ const entry=language.current;
+ return !language.busy && entry?.key===languageKey() && entry.serviceUnavailable===true && Boolean(entry.error);
+}
 function acceptWriting(unreviewed){
  let entry=language.current;if(language.busy)return;
+ if(unreviewed&&!teacherBackupAvailable())return;
  const text=s.question.trim();
  if(!text){show('Write your message','<p>Add your message before continuing.</p>');return;}
  if(unreviewed){
