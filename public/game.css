@@ -186,3 +186,21 @@
 .grammar-checks{display:grid;gap:.5rem;padding:0;list-style:none}
 .grammar-checks li{padding:.65rem .8rem;background:#f4f6fa;color:#172b49;border-radius:.4rem}
 .grammar-checks strong{display:block}
+
+/* A closed side tab keeps the map off the route cards. */
+.route-map-drawer{position:fixed;right:0;top:45%;z-index:30}
+.route-map-drawer>summary{list-style:none;cursor:pointer;writing-mode:vertical-rl;background:#172b49;color:#fff;border:2px solid #fff;border-right:0;border-radius:12px 0 0 12px;padding:18px 10px;font-size:15px;font-weight:700;box-shadow:0 3px 12px #172b4933}
+.route-map-drawer>summary::-webkit-details-marker{display:none}
+.route-map-drawer[open]{top:50%;transform:translateY(-50%);display:flex;align-items:flex-start;max-width:calc(100vw - 12px)}
+.route-map-drawer[open]>summary{position:absolute;right:100%;top:0}
+.route-map-drawer-body{width:min(340px,calc(100vw - 72px));max-height:70vh;overflow:auto;padding:16px;background:#edf2f9;border:1px solid #bac5d6;border-radius:0 0 0 14px;box-shadow:0 8px 30px #172b4933}
+.route-map-drawer-body .network-map{margin:0}
+.route-map-drawer-body .side-heading{font-size:13px}
+.route-map-drawer-body .map-note,.route-map-drawer-body .map-itinerary{font-size:14px}
+.route-map-drawer-body>.secondary{margin-top:12px}
+.composer .send-button{background:#ba2341;color:#fff;border:2px solid #fff;border-radius:10px;padding:14px 24px;font-size:16px;font-weight:800;box-shadow:0 3px 0 #7d1930}
+.composer .send-button:hover:not(:disabled){background:#971a34}
+.composer .teacher-review-button{background:transparent;color:#cbd6e8;border:1px solid #8192ad;border-radius:6px;padding:8px 12px;font-size:13px;font-weight:400;box-shadow:none}
+.composer .teacher-review-button:hover{background:#ffffff12}
+.composer .grammar-reminder{color:#fff;background:#ffffff12;border-left:3px solid #edafb3;padding:10px 12px;font-size:15px;line-height:1.5;margin:0 0 16px}
+@media(prefers-reduced-motion:no-preference){.route-map-drawer[open] .route-map-drawer-body{animation:map-slide .2s ease-out}@keyframes map-slide{from{transform:translateX(100%)}to{transform:translateX(0)}}}

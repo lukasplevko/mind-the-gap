@@ -102,7 +102,7 @@ function draftCards(){return `<div class="draft-grid">${s.drafts.map((d,i)=>`<di
 function usedOxfordTrain(id){
  return s.stage===3&&s.drafts.some(plan=>plan.ids[0]===id);
 }
-function routeBuilder(revision=false){const event=s.event;const last=s.editing.length?services.find(x=>x.id===s.editing.at(-1)):null,from=last?.to||'Oxford',candidates=services.filter(x=>x.from===from);const selectedLegs=s.editing.map(id=>liveService(services.find(x=>x.id===id),event));const total=s.editing.reduce((v,id)=>v+services.find(x=>x.id===id).fare*4,0);return `<section class="route-workbench">${routeMap(s.editing,event)}<div class="route-strip"><b>Your route</b><div>${s.editing.length?s.editing.map((id,i)=>`<span class="leg-token">${id} · ${selectedLegs[i].from} ${selectedLegs[i].departure} → ${selectedLegs[i].to} ${selectedLegs[i].arrival}${btn(i===0?'Change Oxford train':'Change Reading connection','remove','change-train',`data-id="${i}"`)}</span>`).join('<span class="route-arrow">→</span>'):'<span class="muted">Choose a departure below.</span>'}</div><span class="cost-meter ${total>108?'over-budget':''}">£${120-total} left <small>£${total} spent · £12 protected</small></span>${s.editing.length?btn('Start over','clear-route','text-button'):''}</div><div class="planning-budget">${budgetTimeline(selectedLegs)}${candidates.length?paddingtonThinking():''}</div>${candidates.length?`<div class="board-heading"><h3 id="service-picker" tabindex="-1">${s.editing.length?'Connect from '+from:'Leave Oxford'}</h3><span>FARES PER PERSON</span></div><div class="service-cards">${candidates.map(base=>{const l=liveService(base,event),cancelled=isCancelled(l.id,event),used=usedOxfordTrain(l.id),unavailable=cancelled||used;return `<button class="service-card ${unavailable?'unavailable':''}" data-action="add" data-id="${l.id}" ${unavailable?'disabled':''}><span class="service-code">${icon('train')}${l.id}<small>${l.mode}</small></span><b>${l.to}</b><span class="service-times"><span>Departs ${l.from} <b>${l.departure}</b></span><span>${l.to==='Reading'?'Reading (timetable time)':'Arrives '+l.to} <b>${l.arrival}</b></span></span><span class="service-badges"><span class="${l.seats<4?'badge-warning':''}">${icon('group')}${l.seats} seats</span><span class="${l.stepFree?'':'badge-warning'}">${icon('access')}${l.stepFree?'Step-free':'Step-free boarding unavailable'}</span></span><span class="service-bottom"><b>£${l.fare} each · £${l.fare*4} group</b><small>${cancelled?'CANCELLED':used?'ALREADY IN YOUR OTHER PLAN':'ADD TO ROUTE +'}</small></span></button>`}).join('')}</div>`:'<div class="destination-banner">'+icon('pin')+'<b>Route to London Paddington selected.</b> Review the checklist or use a Change button above to pick a different train.</div>'}<section class="route-checklist-panel" aria-label="Live route checklist"><h3>Live route checklist</h3>${routeChecklist(s.editing)}</section><div class="plan-controls"><span class="auto-plan-name">${revision?'Your revised route':'Plan '+(s.drafts.length+1)}</span>${btn('Check route','check-route','secondary')}${btn(revision?'Save revised plan →':'Save alternative +',revision?'save-revision':'save-draft')}</div>${s.routeFeedback?`<div class="feedback ${s.routeFeedback.ok?'good':''}" role="status">${s.routeFeedback.html}</div>`:''}</section>`}
+function routeBuilder(revision=false){const event=s.event;const last=s.editing.length?services.find(x=>x.id===s.editing.at(-1)):null,from=last?.to||'Oxford',candidates=services.filter(x=>x.from===from);const selectedLegs=s.editing.map(id=>liveService(services.find(x=>x.id===id),event));const total=s.editing.reduce((v,id)=>v+services.find(x=>x.id===id).fare*4,0);return `<section class="route-workbench"><div class="route-strip"><b>Your route</b><div>${s.editing.length?s.editing.map((id,i)=>`<span class="leg-token">${id} · ${selectedLegs[i].from} ${selectedLegs[i].departure} → ${selectedLegs[i].to} ${selectedLegs[i].arrival}${btn(i===0?'Change Oxford train':'Change Reading connection','remove','change-train',`data-id="${i}"`)}</span>`).join('<span class="route-arrow">→</span>'):'<span class="muted">Choose a departure below.</span>'}</div><span class="cost-meter ${total>108?'over-budget':''}">£${120-total} left <small>£${total} spent · £12 protected</small></span>${s.editing.length?btn('Start over','clear-route','text-button'):''}</div><div class="planning-budget">${budgetTimeline(selectedLegs)}${candidates.length?paddingtonThinking():''}</div>${candidates.length?`<div class="board-heading"><h3 id="service-picker" tabindex="-1">${s.editing.length?'Connect from '+from:'Leave Oxford'}</h3><span>FARES PER PERSON</span></div><div class="service-cards">${candidates.map(base=>{const l=liveService(base,event),cancelled=isCancelled(l.id,event),used=usedOxfordTrain(l.id),unavailable=cancelled||used;return `<button class="service-card ${unavailable?'unavailable':''}" data-action="add" data-id="${l.id}" ${unavailable?'disabled':''}><span class="service-code">${icon('train')}${l.id}<small>${l.mode}</small></span><b>${l.to}</b><span class="service-times"><span>Departs ${l.from} <b>${l.departure}</b></span><span>${l.to==='Reading'?'Reading (timetable time)':'Arrives '+l.to} <b>${l.arrival}</b></span></span><span class="service-badges"><span class="${l.seats<4?'badge-warning':''}">${icon('group')}${l.seats} seats</span><span class="${l.stepFree?'':'badge-warning'}">${icon('access')}${l.stepFree?'Step-free':'Step-free boarding unavailable'}</span></span><span class="service-bottom"><b>£${l.fare} each · £${l.fare*4} group</b><small>${cancelled?'CANCELLED':used?'ALREADY IN YOUR OTHER PLAN':'ADD TO ROUTE +'}</small></span></button>`}).join('')}</div>`:'<div class="destination-banner">'+icon('pin')+'<b>Route to London Paddington selected.</b> Review the checklist or use a Change button above to pick a different train.</div>'}<section class="route-checklist-panel" aria-label="Live route checklist"><h3>Live route checklist</h3>${routeChecklist(s.editing)}</section><div class="plan-controls"><span class="auto-plan-name">${revision?'Your revised route':'Plan '+(s.drafts.length+1)}</span>${btn('Check route','check-route','secondary')}${btn(revision?'Save revised plan →':'Save alternative +',revision?'save-revision':'save-draft')}</div>${s.routeFeedback?`<div class="feedback ${s.routeFeedback.ok?'good':''}" role="status">${s.routeFeedback.html}</div>`:''}</section>`}
 function eventBrief(){const id=s.event?.cancelled?.[0],l=services.find(x=>x.id===id);return {title:`Your ${l?.departure||''} train from Oxford has been cancelled.`,text:l?`${id}: ${l.from} ${l.departure} → ${l.to} ${l.arrival} will not run. Only ${id} is cancelled. All other services keep their original times, seats and access.`:'Choose a new route from the available services.',icon:'alert'}}
 
 function render(){document.body.classList.toggle('title-screen',s.stage===0);document.body.classList.toggle('story-screen',s.stage===0.5);renderHUD();let html='';
@@ -124,7 +124,10 @@ function render(){document.body.classList.toggle('title-screen',s.stage===0);doc
  if(s.stage===7)html=endingHTML();
  if(s.stage===8)html=reviewHTML();
  main.innerHTML=`${missionSteps()}<section class="screen">${(s.stage===8||(s.stage>0&&s.stage<7))?screenPaddington():''}${html}</section><footer><span>Fictional journey · submitted text is sent to the AI language review when connected</span>${btn('For teachers & sources','teachers','text-button')}</footer>`;
- side.innerHTML=`${s.stage>=3?`<section class="persistent-map"><div class="side-heading">ROUTE MAP ${btn('All options','atlas','text-button')}</div>${routeMap(s.stage>=6?s.revised?.ids||[]:s.stage===3&&s.drafts.length===2?s.drafts[s.selected].ids:s.editing,s.event)}${s.drafts.length?btn('Compare saved plans','atlas','secondary'):''}</section>`:''}${teamRail()}<div class="side-heading">MISSION BOARD ${btn('Open','requirements','text-button')}</div>${journeyBrief()}${s.stage===3||s.stage===5?routeChecklist(s.stage===3&&s.drafts.length===2?s.drafts[s.selected].ids:s.editing):requirementsTiles({compact:true})}${s.known.size?`<div class="side-heading">CASEY’S NOTES</div>${caseyFacts([...s.known].filter(k=>['seats','access'].includes(k)))}`:''}`;
+ side.innerHTML=`${s.stage>=3?`<details class="route-map-drawer"><summary>Route map</summary><div class="route-map-drawer-body"><div class="side-heading">ROUTE MAP ${btn('All options','atlas','text-button')}</div>${routeMap(s.stage>=6?s.revised?.ids||[]:s.stage===3&&s.drafts.length===2?s.drafts[s.selected].ids:s.editing,s.event)}${s.drafts.length?btn('Compare saved plans','atlas','secondary'):''}</div></details>`:''}${teamRail()}<div class="side-heading">MISSION BOARD ${btn('Open','requirements','text-button')}</div>${journeyBrief()}${s.stage===3||s.stage===5?routeChecklist(s.stage===3&&s.drafts.length===2?s.drafts[s.selected].ids:s.editing):requirementsTiles({compact:true})}${s.known.size?`<div class="side-heading">CASEY’S NOTES</div>${caseyFacts([...s.known].filter(k=>['seats','access'].includes(k)))}`:''}`;
+ document.body.querySelector(':scope > .route-map-drawer')?.remove();
+ const mapDrawer=side.querySelector('.route-map-drawer');
+ if(mapDrawer)document.body.append(mapDrawer);
  mountLanguageReview();
  updateClock();
  document.querySelectorAll('[data-action="friend-details"]').forEach(b=>b.setAttribute('aria-haspopup','dialog'));
@@ -132,15 +135,15 @@ function render(){document.body.classList.toggle('title-screen',s.stage===0);doc
 function mountLanguageReview(){
  const area=document.querySelector('.compose-section .speech');
  if(!area)return;
- const notice=document.createElement('p');notice.className='small-note';notice.textContent='Language review checks this message. When connected, your text is sent to the AI language review for feedback. Use only the fictional journey details.';area.append(notice);
+ const notice=document.createElement('p');notice.className='grammar-reminder';notice.textContent='Check your grammar before you send. Your verb tenses, articles, word forms and spelling will be reviewed at the end of the game.';area.querySelector('textarea').before(notice);
  const panel=document.createElement('section');panel.className='language-feedback';panel.setAttribute('aria-live','polite');
  const entry=language.current;
  if(language.busy)panel.innerHTML='<p role="status">Reviewing your message…</p>';
  else if(entry&&entry.key===languageKey()){
  panel.innerHTML=reviewPanel(entry,esc);
- if(!entry.error&&!entry.blocked)panel.innerHTML+=btn('Continue with this message','accept-writing');
+ if(!entry.error)panel.innerHTML+=btn('Continue with this message','accept-writing');
  }
- panel.innerHTML+=btn('Continue with teacher review','teacher-review','secondary');
+ panel.innerHTML+=btn('Continue with teacher review','teacher-review','teacher-review-button');
  area.append(panel);
  const send=area.querySelector('[data-action="send"]');if(send){send.disabled=language.busy;send.textContent=entry&&!entry.error?'Check my revision':'Check & send';}
  const field=area.querySelector('textarea');if(field)field.disabled=language.busy;
@@ -150,7 +153,7 @@ async function reviewWriting(){
  if(s.stage!==2||caseyDone())return;
  const text=s.question.trim();if(!text){show('Write your message','<p>Add your own message before sending it.</p>');return;}
  const key=languageKey(),previous=language.attempts.get(key)||[];
- if(previous.at(-1)?.text===text&&previous.at(-1)?.result){language.current=previous.at(-1);render();return;}
+ if(previous.at(-1)?.text===text&&previous.at(-1)?.result){language.current=previous.at(-1);acceptWriting(false);return;}
  const entry={key,text,attempt:previous.filter(x=>x.result).length+1,label:caseySteps[s.requests.length].instruction};
  language.busy=true;language.current=entry;const start=Date.now();render();
  try{
@@ -166,6 +169,7 @@ async function reviewWriting(){
  }
  if(s.stage!==2||languageKey()!==key)return;
 
+ if(entry.result){acceptWriting(false);return;}
  render();document.querySelector('.language-feedback')?.scrollIntoView({block:'center',behavior:'smooth'});
 }
 function acceptWriting(unreviewed){
@@ -180,7 +184,7 @@ function acceptWriting(unreviewed){
   }
  }else{
   if(!entry||languageKey()!==entry.key||text!==entry.text){show('Check your edited message','<p>Your text has changed. Check it again or continue with teacher review.</p>');return;}
-  if(!entry.result||entry.blocked)return;
+  if(!entry.result)return;
  }
  language.history.push({label:entry.label,finalText:entry.text,attempts:[...(language.attempts.get(entry.key)||[])],accepted:entry,unreviewed});
  language.current=null;sendCasey();
